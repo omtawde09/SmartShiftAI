@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartShiftAI — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@300;400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --yellow:#F9F0C8;--yellow-mid:#F2E07A;--yellow-deep:#E8CC3A;
+  --blue:#C8DCF0;--blue-mid:#7AAEDB;--blue-deep:#3A7FBF;--blue-dark:#1E4E7A;
+  --cream:#FDFAF0;--text:#1A2A3A;--muted:#6A7E92;
+  --shadow:0 4px 24px rgba(58,127,191,0.12);--shadow-lg:0 12px 48px rgba(58,127,191,0.18);
+  --radius:16px;--radius-sm:10px;
+  --admin-accent:#7C3AED;--admin-light:#EDE9FE;--admin-mid:#A78BFA;
+  --worker-accent:#0EA5E9;--worker-light:#E0F2FE;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;overflow-x:hidden;}
+.page{display:none;min-height:100vh;}.page.active{display:flex;flex-direction:column;}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(249,240,200,0.7);backdrop-filter:blur(12px);border-bottom:1.5px solid rgba(122,174,219,0.25);position:sticky;top:0;z-index:100;}
+.nav-logo{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:700;color:var(--blue-dark);}
+.nav-logo span{color:var(--blue-mid);}
+.nav-pill{background:var(--blue-mid);color:white;padding:8px 22px;border-radius:50px;font-size:0.875rem;font-weight:500;cursor:pointer;border:none;transition:all 0.2s;}
+.nav-pill:hover{background:var(--blue-deep);transform:translateY(-1px);}
+#page-role{background:linear-gradient(135deg,var(--yellow) 0%,var(--cream) 45%,var(--blue) 100%);position:relative;overflow:hidden;}
+.role-bg-blob{position:absolute;border-radius:50%;opacity:.3;filter:blur(90px);pointer-events:none;}
+.rblob1{width:500px;height:500px;background:var(--yellow-mid);top:-180px;left:-150px;}
+.rblob2{width:450px;height:450px;background:var(--blue-mid);bottom:-150px;right:-100px;}
+.rblob3{width:280px;height:280px;background:#A78BFA;top:40%;right:20%;}
+.role-main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 48px;gap:40px;position:relative;z-index:1;}
+.role-headline{text-align:center;}
+.role-headline h1{font-family:'Fraunces',serif;font-size:clamp(2.2rem,4vw,3.4rem);font-weight:700;color:var(--blue-dark);line-height:1.15;margin-bottom:12px;animation:fadeSlideUp 0.6s ease both;}
+.role-headline h1 em{color:var(--blue-mid);font-style:normal;}
+.role-headline p{font-size:1.05rem;color:var(--muted);animation:fadeSlideUp 0.6s 0.1s ease both;}
+.role-cards{display:flex;gap:28px;animation:fadeSlideUp 0.6s 0.2s ease both;}
+.role-card{width:300px;padding:40px 32px;background:rgba(255,255,255,0.88);backdrop-filter:blur(20px);border-radius:24px;border:2px solid transparent;box-shadow:var(--shadow-lg);cursor:pointer;transition:all 0.3s;text-align:center;}
+.role-card:hover{transform:translateY(-8px);}
+.admin-card:hover{border-color:var(--admin-mid);box-shadow:0 20px 60px rgba(124,58,237,0.2);}
+.worker-card:hover{border-color:var(--blue-mid);box-shadow:0 20px 60px rgba(14,165,233,0.2);}
+.role-icon-wrap{width:80px;height:80px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:2.4rem;margin:0 auto 20px;}
+.admin-card .role-icon-wrap{background:linear-gradient(135deg,var(--admin-light),#DDD6FE);}
+.worker-card .role-icon-wrap{background:linear-gradient(135deg,var(--worker-light),var(--blue));}
+.role-card h2{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:700;color:var(--blue-dark);margin-bottom:10px;}
+.role-card p{font-size:0.88rem;color:var(--muted);line-height:1.65;margin-bottom:24px;}
+.role-chip-list{display:flex;flex-direction:column;gap:8px;margin-bottom:28px;}
+.role-chip{display:flex;align-items:center;gap:8px;font-size:0.8rem;color:var(--text);border-radius:8px;padding:7px 12px;}
+.admin-card .role-chip{background:rgba(237,233,254,0.6);}
+.worker-card .role-chip{background:rgba(224,242,254,0.6);}
+.role-chip-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.admin-card .role-chip-dot{background:var(--admin-accent);}
+.worker-card .role-chip-dot{background:var(--worker-accent);}
+.role-select-btn{width:100%;padding:13px 20px;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:600;cursor:pointer;transition:all 0.25s;}
+.admin-card .role-select-btn{background:linear-gradient(135deg,var(--admin-accent),#5B21B6);color:white;box-shadow:0 4px 16px rgba(124,58,237,0.3);}
+.worker-card .role-select-btn{background:linear-gradient(135deg,var(--blue-mid),var(--blue-deep));color:white;box-shadow:0 4px 16px rgba(58,127,191,0.3);}
+.role-divider{text-align:center;font-size:0.8rem;color:var(--muted);}
+.auth-page{position:relative;overflow:hidden;}
+.auth-page-admin{background:linear-gradient(135deg,#F5F3FF 0%,var(--cream) 50%,#EDE9FE 100%);}
+.auth-page-worker{background:linear-gradient(135deg,var(--yellow) 0%,var(--cream) 40%,var(--blue) 100%);}
+.auth-blob{position:absolute;border-radius:50%;opacity:.3;filter:blur(80px);pointer-events:none;}
+.ab1{width:550px;height:550px;top:-200px;left:-200px;}
+.ab2{width:450px;height:450px;bottom:-150px;right:-100px;}
+.admin-blob1{background:#C4B5FD;}.admin-blob2{background:#A78BFA;}
+.worker-blob1{background:var(--yellow-mid);}.worker-blob2{background:var(--blue-mid);}
+.auth-main{flex:1;display:flex;align-items:center;justify-content:center;padding:60px 48px;gap:72px;position:relative;z-index:1;}
+.auth-hero{flex:1;max-width:480px;}
+.auth-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:50px;font-size:0.8rem;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:22px;}
+.admin-badge{background:rgba(124,58,237,0.12);border:1.5px solid var(--admin-mid);color:var(--admin-accent);}
+.worker-badge{background:rgba(58,127,191,0.12);border:1.5px solid var(--blue-mid);color:var(--blue-deep);}
+.auth-h1{font-family:'Fraunces',serif;font-size:clamp(2rem,4vw,3.2rem);font-weight:700;line-height:1.1;color:var(--blue-dark);margin-bottom:18px;}
+.auth-h1 em.admin-em{color:var(--admin-mid);font-style:normal;}
+.auth-h1 em.worker-em{color:var(--blue-mid);font-style:normal;}
+.auth-sub{font-size:1rem;color:var(--muted);line-height:1.7;margin-bottom:32px;}
+.auth-perks{display:flex;flex-direction:column;gap:12px;}
+.perk{display:flex;align-items:center;gap:12px;font-size:0.88rem;color:var(--text);}
+.perk-dot{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.admin-perk-dot{background:var(--admin-light);}.worker-perk-dot{background:var(--blue);}
+.auth-card{background:rgba(255,255,255,0.88);backdrop-filter:blur(20px);border-radius:24px;padding:44px 40px;width:420px;box-shadow:var(--shadow-lg);}
+.auth-card-admin{border:1.5px solid rgba(167,139,250,0.4);}
+.auth-card-worker{border:1.5px solid rgba(122,174,219,0.3);}
+.role-tag{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:50px;font-size:0.75rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:16px;}
+.role-tag-admin{background:var(--admin-light);color:var(--admin-accent);}
+.role-tag-worker{background:var(--blue);color:var(--blue-dark);}
+.role-tag-dot{width:6px;height:6px;border-radius:50%;}
+.role-tag-admin .role-tag-dot{background:var(--admin-accent);}
+.role-tag-worker .role-tag-dot{background:var(--blue-deep);}
+.card-title{font-family:'Fraunces',serif;font-size:1.6rem;font-weight:600;color:var(--blue-dark);margin-bottom:6px;}
+.card-sub{font-size:0.9rem;color:var(--muted);margin-bottom:28px;}
+.form-group{margin-bottom:18px;}
+.form-label{display:block;font-size:0.82rem;font-weight:600;color:var(--blue-dark);margin-bottom:7px;letter-spacing:0.02em;}
+.form-input,.form-select{width:100%;padding:12px 16px;border:1.5px solid rgba(122,174,219,0.4);border-radius:var(--radius-sm);background:rgba(249,240,200,0.3);font-family:'DM Sans',sans-serif;font-size:0.95rem;color:var(--text);transition:all 0.2s;outline:none;appearance:none;}
+.form-input:focus,.form-select:focus{border-color:var(--blue-mid);background:white;box-shadow:0 0 0 3px rgba(122,174,219,0.2);}
+.admin-input:focus{border-color:var(--admin-mid)!important;box-shadow:0 0 0 3px rgba(167,139,250,0.2)!important;}
+.form-input::placeholder{color:#aab8c4;}
+.select-wrapper{position:relative;}
+.select-wrapper::after{content:'▾';position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--blue-mid);pointer-events:none;}
+.btn-primary{width:100%;padding:14px;border:none;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;transition:all 0.25s;margin-top:8px;}
+.btn-primary-admin{background:linear-gradient(135deg,var(--admin-accent),#5B21B6);color:white;box-shadow:0 4px 16px rgba(124,58,237,0.3);}
+.btn-primary-admin:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(124,58,237,0.45);}
+.btn-primary-worker{background:linear-gradient(135deg,var(--blue-mid),var(--blue-deep));color:white;box-shadow:0 4px 16px rgba(58,127,191,0.3);}
+.btn-primary-worker:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(58,127,191,0.4);}
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(122,174,219,0.3);}
+.divider span{font-size:0.8rem;color:var(--muted);}
+.btn-secondary{width:100%;padding:12px;background:transparent;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:500;cursor:pointer;transition:all 0.2s;}
+.btn-secondary-admin{color:var(--admin-accent);border:1.5px solid var(--admin-mid);}
+.btn-secondary-admin:hover{background:var(--admin-light);}
+.btn-secondary-worker{color:var(--blue-deep);border:1.5px solid var(--blue-mid);}
+.btn-secondary-worker:hover{background:var(--blue);}
+.switch-role-link{text-align:center;margin-top:18px;font-size:0.82rem;color:var(--muted);}
+.switch-role-link a{color:var(--blue-mid);font-weight:600;cursor:pointer;}
+.register-main{flex:1;display:flex;align-items:center;justify-content:center;padding:48px;}
+.register-card{background:rgba(255,255,255,0.88);backdrop-filter:blur(20px);border-radius:24px;padding:48px 44px;width:580px;box-shadow:var(--shadow-lg);}
+.register-card-admin{border:1.5px solid rgba(167,139,250,0.35);}
+.register-card-worker{border:1.5px solid rgba(122,174,219,0.3);}
+.step-indicator{display:flex;gap:8px;margin-bottom:28px;}
+.step-dot{width:32px;height:6px;border-radius:3px;background:rgba(122,174,219,0.3);transition:all 0.3s;}
+.step-dot.active{width:48px;}
+.step-dot-admin.active{background:var(--admin-mid);}
+.step-dot-admin.done{background:var(--admin-accent);}
+.step-dot-worker.active{background:var(--blue-mid);}
+.step-dot-worker.done{background:var(--blue-deep);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.position-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;}
+.position-chip{padding:10px 14px;border:1.5px solid rgba(122,174,219,0.4);border-radius:var(--radius-sm);background:rgba(249,240,200,0.3);font-size:0.85rem;color:var(--text);cursor:pointer;transition:all 0.2s;text-align:center;}
+.position-chip:hover{border-color:var(--blue-mid);background:var(--blue);}
+.position-chip.selected-admin{border-color:var(--admin-accent);background:var(--admin-mid);color:white;font-weight:600;}
+.position-chip.selected-worker{border-color:var(--blue-deep);background:var(--blue-mid);color:white;font-weight:600;}
+.admin-access-chips{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.access-chip{padding:8px 10px;border:1.5px solid rgba(167,139,250,0.3);border-radius:8px;background:rgba(237,233,254,0.3);font-size:0.78rem;color:var(--text);cursor:pointer;transition:all 0.2s;text-align:center;}
+.access-chip:hover{border-color:var(--admin-mid);}
+.access-chip.selected{border-color:var(--admin-accent);background:var(--admin-light);color:var(--admin-accent);font-weight:600;}
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+.toast{position:fixed;bottom:32px;right:32px;background:var(--blue-dark);color:white;padding:14px 22px;border-radius:12px;font-size:0.9rem;z-index:999;transform:translateY(80px);opacity:0;transition:all 0.3s;pointer-events:none;}
+.toast.show{transform:translateY(0);opacity:1;}
+.loader{position:fixed;inset:0;background:var(--cream);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity 0.4s;}
+.loader-logo{font-family:'Fraunces',serif;font-size:2.5rem;font-weight:700;color:var(--blue-dark);margin-bottom:16px;}
+.loader-logo span{color:var(--blue-mid);}
+.loader-bar{width:200px;height:4px;background:rgba(122,174,219,0.2);border-radius:2px;overflow:hidden;}
+.loader-fill{height:100%;background:var(--blue-mid);border-radius:2px;animation:loadAnim 1.4s ease forwards;}
+@keyframes loadAnim{from{width:0;}to{width:100%;}}
+@media(max-width:900px){
+  .role-cards{flex-direction:column;align-items:center;}
+  .auth-main{flex-direction:column;}
+  .auth-card{width:100%;max-width:420px;}
+}
+</style>
+</head>
+<body>
+<div class="loader" id="loader">
+  <div class="loader-logo">SmartShift<span>AI</span></div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<!-- ROLE SELECTION -->
+<div class="page active" id="page-role">
+  <nav class="nav">
+    <div class="nav-logo">SmartShift<span>AI</span></div>
+    <div style="font-size:0.85rem;color:var(--muted)">AI-Powered Workforce Platform</div>
+  </nav>
+  <div class="role-main">
+    <div class="role-bg-blob rblob1"></div><div class="role-bg-blob rblob2"></div><div class="role-bg-blob rblob3"></div>
+    <div class="role-headline">
+      <h1>Who are you <em>logging in</em> as?</h1>
+      <p>Select your role to continue to the right experience</p>
+    </div>
+    <div class="role-cards">
+      <div class="role-card admin-card" onclick="selectRole('admin')">
+        <div class="role-icon-wrap">🛡️</div>
+        <h2>Admin</h2>
+        <p>Manage your entire workforce, configure shifts, monitor AI insights, and control platform settings.</p>
+        <div class="role-chip-list">
+          <div class="role-chip"><div class="role-chip-dot"></div>Full workforce visibility</div>
+          <div class="role-chip"><div class="role-chip-dot"></div>Shift scheduling &amp; AI controls</div>
+          <div class="role-chip"><div class="role-chip-dot"></div>Analytics &amp; cost reports</div>
+          <div class="role-chip"><div class="role-chip-dot"></div>User &amp; access management</div>
+        </div>
+        <button class="role-select-btn">Continue as Admin →</button>
+      </div>
+      <div class="role-card worker-card" onclick="selectRole('worker')">
+        <div class="role-icon-wrap">👷</div>
+        <h2>Worker</h2>
+        <p>View your assigned shifts, check schedules, mark availability, and stay connected with your team.</p>
+        <div class="role-chip-list">
+          <div class="role-chip"><div class="role-chip-dot"></div>View your shift schedule</div>
+          <div class="role-chip"><div class="role-chip-dot"></div>Mark availability &amp; preferences</div>
+          <div class="role-chip"><div class="role-chip-dot"></div>Swap &amp; request leave</div>
+          <div class="role-chip"><div class="role-chip-dot"></div>Team notifications</div>
+        </div>
+        <button class="role-select-btn">Continue as Worker →</button>
+      </div>
+    </div>
+    <div class="role-divider">Choose your role to get the right login experience</div>
+  </div>
+</div>
+
+<!-- ADMIN LOGIN -->
+<div class="page auth-page auth-page-admin" id="page-admin-login">
+  <div class="auth-blob ab1 admin-blob1"></div><div class="auth-blob ab2 admin-blob2"></div>
+  <nav class="nav">
+    <div class="nav-logo">SmartShift<span>AI</span></div>
+    <button class="nav-pill" onclick="showPage('page-role')" style="background:var(--admin-accent)">← Change Role</button>
+  </nav>
+  <div class="auth-main">
+    <div class="auth-hero">
+      <div class="auth-badge admin-badge">✦ Admin Portal</div>
+      <h1 class="auth-h1">Welcome back,<br><em class="admin-em">Administrator</em></h1>
+      <p class="auth-sub">Access your full workforce management dashboard — AI forecasts, shift scheduling, cost analytics, and team oversight.</p>
+      <div class="auth-perks">
+        <div class="perk"><div class="perk-dot admin-perk-dot">📊</div>Full analytics &amp; reporting dashboard</div>
+        <div class="perk"><div class="perk-dot admin-perk-dot">🤖</div>AI demand forecasting &amp; worker prediction</div>
+        <div class="perk"><div class="perk-dot admin-perk-dot">👥</div>Complete team management &amp; task assignment</div>
+        <div class="perk"><div class="perk-dot admin-perk-dot">📋</div>Track task completion &amp; worker hours in real-time</div>
+        <div class="perk"><div class="perk-dot admin-perk-dot">⚙️</div>Platform configuration &amp; settings</div>
+      </div>
+    </div>
+    <div class="auth-card auth-card-admin">
+      <div class="role-tag role-tag-admin"><div class="role-tag-dot"></div>Admin</div>
+      <div class="card-title">Admin Sign In</div>
+      <div class="card-sub">Enter your administrator credentials</div>
+      <div class="form-group"><label class="form-label">Admin Email / Username</label><input type="email" class="form-input admin-input" placeholder="admin@company.com" id="admin-email"></div>
+      <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input admin-input" placeholder="••••••••"></div>
+      <div class="form-group"><label class="form-label">Admin Access Code</label><input type="text" class="form-input admin-input" placeholder="e.g. ADM-2024-XXXX" id="admin-code"></div>
+      <button class="btn-primary btn-primary-admin" onclick="handleAdminLogin()">Sign In as Admin →</button>
+      <div class="divider"><span>or</span></div>
+      <button class="btn-secondary btn-secondary-admin" onclick="showPage('page-admin-register')">Create Admin Account</button>
+      <div class="switch-role-link">Not an admin? <a onclick="showPage('page-role')">Switch role</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- WORKER LOGIN -->
+<div class="page auth-page auth-page-worker" id="page-worker-login">
+  <div class="auth-blob ab1 worker-blob1"></div><div class="auth-blob ab2 worker-blob2"></div>
+  <nav class="nav">
+    <div class="nav-logo">SmartShift<span>AI</span></div>
+    <button class="nav-pill" onclick="showPage('page-role')">← Change Role</button>
+  </nav>
+  <div class="auth-main">
+    <div class="auth-hero">
+      <div class="auth-badge worker-badge">✦ Worker Portal</div>
+      <h1 class="auth-h1">Your Shifts,<br><em class="worker-em">Simplified.</em></h1>
+      <p class="auth-sub">Check your schedule, mark availability, request leave, and stay in sync with your team — all in one place.</p>
+      <div class="auth-perks">
+        <div class="perk"><div class="perk-dot worker-perk-dot">📅</div>View your upcoming shift schedule</div>
+        <div class="perk"><div class="perk-dot worker-perk-dot">📋</div>See your assigned tasks &amp; daily workload</div>
+        <div class="perk"><div class="perk-dot worker-perk-dot">⏱️</div>Track your hours completed &amp; remaining</div>
+        <div class="perk"><div class="perk-dot worker-perk-dot">📈</div>Weekly task completion &amp; performance</div>
+        <div class="perk"><div class="perk-dot worker-perk-dot">🔄</div>Request shift swaps &amp; leave easily</div>
+      </div>
+    </div>
+    <div class="auth-card auth-card-worker">
+      <div class="role-tag role-tag-worker"><div class="role-tag-dot"></div>Worker</div>
+      <div class="card-title">Worker Sign In</div>
+      <div class="card-sub">Enter your employee credentials</div>
+      <div class="form-group"><label class="form-label">Employee ID</label><input type="text" class="form-input" placeholder="EMP-2024-001" id="worker-id"></div>
+      <div class="form-group"><label class="form-label">Email Address</label><input type="email" class="form-input" placeholder="you@company.com" id="worker-email"></div>
+      <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" placeholder="••••••••"></div>
+      <button class="btn-primary btn-primary-worker" onclick="handleWorkerLogin()">Sign In →</button>
+      <div class="divider"><span>or</span></div>
+      <button class="btn-secondary btn-secondary-worker" onclick="showPage('page-worker-register')">Create Worker Account</button>
+      <div class="switch-role-link">Not a worker? <a onclick="showPage('page-role')">Switch role</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN REGISTER -->
+<div class="page auth-page auth-page-admin" id="page-admin-register">
+  <div class="auth-blob ab1 admin-blob1"></div><div class="auth-blob ab2 admin-blob2"></div>
+  <nav class="nav">
+    <div class="nav-logo">SmartShift<span>AI</span></div>
+    <button class="nav-pill" onclick="showPage('page-admin-login')" style="background:var(--admin-accent)">← Back to Login</button>
+  </nav>
+  <div class="register-main">
+    <div class="register-card register-card-admin">
+      <div class="step-indicator">
+        <div class="step-dot step-dot-admin active" id="astep1"></div>
+        <div class="step-dot step-dot-admin" id="astep2"></div>
+        <div class="step-dot step-dot-admin" id="astep3"></div>
+      </div>
+      <div id="areg-step1">
+        <div class="role-tag role-tag-admin" style="margin-bottom:12px"><div class="role-tag-dot"></div>Admin Registration</div>
+        <div class="card-title">Create Admin Account</div>
+        <div class="card-sub">Set up your administrator profile</div>
+        <div class="form-row" style="margin-bottom:18px">
+          <div class="form-group" style="margin:0"><label class="form-label">First Name</label><input type="text" class="form-input admin-input" placeholder="Riya" id="areg-fname"></div>
+          <div class="form-group" style="margin:0"><label class="form-label">Last Name</label><input type="text" class="form-input admin-input" placeholder="Mehta"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Admin Email</label><input type="email" class="form-input admin-input" placeholder="admin@company.com" id="areg-email"></div>
+        <div class="form-group"><label class="form-label">Mobile Number</label><input type="tel" class="form-input admin-input" placeholder="+91 98765 43210"></div>
+        <div class="form-group"><label class="form-label">Organisation / Company Name</label><input type="text" class="form-input admin-input" placeholder="Acme Technologies Pvt Ltd"></div>
+        <button class="btn-primary btn-primary-admin" onclick="nextAdminStep(2)">Continue →</button>
+      </div>
+      <div id="areg-step2" style="display:none">
+        <div class="role-tag role-tag-admin" style="margin-bottom:12px"><div class="role-tag-dot"></div>Admin Registration</div>
+        <div class="card-title">Role &amp; Access Level</div>
+        <div class="card-sub">Define your admin role and permissions</div>
+        <div class="form-group">
+          <label class="form-label">Admin Designation</label>
+          <div class="select-wrapper">
+            <select class="form-select admin-input">
+              <option disabled selected>Select designation...</option>
+              <option>Chief Executive Officer (CEO)</option><option>Chief Operating Officer (COO)</option>
+              <option>HR Manager</option><option>Operations Manager</option>
+              <option>General Manager</option><option>Department Head</option>
+              <option>Branch Manager</option><option>System Administrator</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label class="form-label">Admin Access Code</label><input type="text" class="form-input admin-input" placeholder="e.g. ADM-2024-XXXX"></div>
+        <div class="form-group">
+          <label class="form-label">Module Access Permissions</label>
+          <div class="admin-access-chips">
+            <div class="access-chip selected" onclick="toggleAccess(this)">📊 Analytics</div>
+            <div class="access-chip selected" onclick="toggleAccess(this)">👥 Employees</div>
+            <div class="access-chip selected" onclick="toggleAccess(this)">📅 Shifts</div>
+            <div class="access-chip selected" onclick="toggleAccess(this)">🤖 AI Tools</div>
+            <div class="access-chip selected" onclick="toggleAccess(this)">💰 Finance</div>
+            <div class="access-chip" onclick="toggleAccess(this)">⚙️ Settings</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;margin-top:8px">
+          <button class="btn-secondary btn-secondary-admin" style="width:auto;padding:13px 24px" onclick="prevAdminStep(1)">← Back</button>
+          <button class="btn-primary btn-primary-admin" onclick="nextAdminStep(3)">Continue →</button>
+        </div>
+      </div>
+      <div id="areg-step3" style="display:none">
+        <div class="role-tag role-tag-admin" style="margin-bottom:12px"><div class="role-tag-dot"></div>Admin Registration</div>
+        <div class="card-title">Location &amp; Security</div>
+        <div class="card-sub">Set your workspace and secure your account</div>
+        <div class="form-group">
+          <label class="form-label">City (Maharashtra)</label>
+          <div class="select-wrapper">
+            <select class="form-select admin-input" id="areg-city" onchange="fillWorkspaces('areg-city','areg-workspace')">
+              <option value="" disabled selected>Select city...</option>
+              <option value="mumbai">Mumbai</option><option value="pune">Pune</option>
+              <option value="nagpur">Nagpur</option><option value="nashik">Nashik</option>
+              <option value="aurangabad">Aurangabad</option><option value="thane">Thane</option>
+              <option value="kolhapur">Kolhapur</option><option value="navi-mumbai">Navi Mumbai</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Workspace / Branch</label>
+          <div class="select-wrapper"><select class="form-select admin-input" id="areg-workspace"><option disabled selected>— Select city first —</option></select></div>
+        </div>
+        <div class="form-group"><label class="form-label">Set Password</label><input type="password" class="form-input admin-input" placeholder="Min 8 characters"></div>
+        <div style="display:flex;gap:12px;margin-top:8px">
+          <button class="btn-secondary btn-secondary-admin" style="width:auto;padding:13px 24px" onclick="prevAdminStep(2)">← Back</button>
+          <button class="btn-primary btn-primary-admin" onclick="completeAdminRegistration()">Create Admin Account ✓</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WORKER REGISTER -->
+<div class="page auth-page auth-page-worker" id="page-worker-register">
+  <div class="auth-blob ab1 worker-blob1"></div><div class="auth-blob ab2 worker-blob2"></div>
+  <nav class="nav">
+    <div class="nav-logo">SmartShift<span>AI</span></div>
+    <button class="nav-pill" onclick="showPage('page-worker-login')">← Back to Login</button>
+  </nav>
+  <div class="register-main">
+    <div class="register-card register-card-worker">
+      <div class="step-indicator">
+        <div class="step-dot step-dot-worker active" id="wstep1"></div>
+        <div class="step-dot step-dot-worker" id="wstep2"></div>
+        <div class="step-dot step-dot-worker" id="wstep3"></div>
+      </div>
+      <div id="wreg-step1">
+        <div class="role-tag role-tag-worker" style="margin-bottom:12px"><div class="role-tag-dot"></div>Worker Registration</div>
+        <div class="card-title">Create your account</div>
+        <div class="card-sub">Tell us about yourself to get started</div>
+        <div class="form-row" style="margin-bottom:18px">
+          <div class="form-group" style="margin:0"><label class="form-label">First Name</label><input type="text" class="form-input" placeholder="Aarav" id="wreg-fname"></div>
+          <div class="form-group" style="margin:0"><label class="form-label">Last Name</label><input type="text" class="form-input" placeholder="Sharma"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Email Address</label><input type="email" class="form-input" placeholder="aarav@company.com" id="wreg-email"></div>
+        <div class="form-group"><label class="form-label">Mobile Number</label><input type="tel" class="form-input" placeholder="+91 98765 43210"></div>
+        <div class="form-group"><label class="form-label">Employee ID</label><input type="text" class="form-input" placeholder="EMP-2024-001"></div>
+        <button class="btn-primary btn-primary-worker" onclick="nextWorkerStep(2)">Continue →</button>
+      </div>
+      <div id="wreg-step2" style="display:none">
+        <div class="role-tag role-tag-worker" style="margin-bottom:12px"><div class="role-tag-dot"></div>Worker Registration</div>
+        <div class="card-title">Your Role &amp; Location</div>
+        <div class="card-sub">Select your position and workplace</div>
+        <div class="form-group">
+          <label class="form-label">Your Position</label>
+          <div class="select-wrapper">
+            <select class="form-select" id="wreg-position">
+              <option value="" disabled selected>Select your position...</option>
+              <optgroup label="Technology"><option>Software Engineer</option><option>Full Stack Developer</option><option>Data Scientist</option><option>DevOps Engineer</option><option>IT Support</option></optgroup>
+              <optgroup label="Customer Service"><option>Customer Service Rep</option><option>Call Centre Agent</option><option>Support Lead</option></optgroup>
+              <optgroup label="Operations"><option>Operations Executive</option><option>Logistics Coordinator</option><option>Warehouse Supervisor</option></optgroup>
+              <optgroup label="Healthcare"><option>Nurse</option><option>Lab Technician</option><option>Pharmacist</option></optgroup>
+              <optgroup label="Retail"><option>Sales Associate</option><option>Chef / Cook</option><option>Front Desk Executive</option><option>Security Guard</option></optgroup>
+              <optgroup label="Other"><option>Intern / Trainee</option><option>Administrative Executive</option><option>Accountant</option></optgroup>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">City (Maharashtra)</label>
+          <div class="select-wrapper">
+            <select class="form-select" id="wreg-city" onchange="fillWorkspaces('wreg-city','wreg-workspace')">
+              <option value="" disabled selected>Select city...</option>
+              <option value="mumbai">Mumbai</option><option value="pune">Pune</option>
+              <option value="nagpur">Nagpur</option><option value="nashik">Nashik</option>
+              <option value="aurangabad">Aurangabad</option><option value="thane">Thane</option>
+              <option value="kolhapur">Kolhapur</option><option value="navi-mumbai">Navi Mumbai</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Workspace / Company</label>
+          <div class="select-wrapper"><select class="form-select" id="wreg-workspace"><option disabled selected>— Select city first —</option></select></div>
+        </div>
+        <div style="display:flex;gap:12px;margin-top:8px">
+          <button class="btn-secondary btn-secondary-worker" style="width:auto;padding:13px 24px" onclick="prevWorkerStep(1)">← Back</button>
+          <button class="btn-primary btn-primary-worker" onclick="nextWorkerStep(3)">Continue →</button>
+        </div>
+      </div>
+      <div id="wreg-step3" style="display:none">
+        <div class="role-tag role-tag-worker" style="margin-bottom:12px"><div class="role-tag-dot"></div>Worker Registration</div>
+        <div class="card-title">Shift Preference</div>
+        <div class="card-sub">Choose your availability &amp; preferred shifts</div>
+        <div class="form-group">
+          <label class="form-label">Preferred Shift</label>
+          <div class="position-grid">
+            <div class="position-chip" onclick="selectChip(this,'shift','worker')">🌅 Morning (6AM–2PM)</div>
+            <div class="position-chip" onclick="selectChip(this,'shift','worker')">☀️ Afternoon (2PM–10PM)</div>
+            <div class="position-chip" onclick="selectChip(this,'shift','worker')">🌙 Night (10PM–6AM)</div>
+            <div class="position-chip" onclick="selectChip(this,'shift','worker')">🔄 Flexible / Any</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Days Available</label>
+          <div class="position-grid">
+            <div class="position-chip" onclick="selectChip(this,'days','worker')">Mon–Fri</div>
+            <div class="position-chip" onclick="selectChip(this,'days','worker')">Mon–Sat</div>
+            <div class="position-chip" onclick="selectChip(this,'days','worker')">All 7 Days</div>
+            <div class="position-chip" onclick="selectChip(this,'days','worker')">Weekends Only</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Experience Level</label>
+          <div class="select-wrapper">
+            <select class="form-select">
+              <option>0–1 year (Fresher)</option><option>1–3 years</option>
+              <option selected>3–5 years</option><option>5–10 years</option><option>10+ years</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label class="form-label">Set Password</label><input type="password" class="form-input" placeholder="Min 8 characters"></div>
+        <div style="display:flex;gap:12px;margin-top:8px">
+          <button class="btn-secondary btn-secondary-worker" style="width:auto;padding:13px 24px" onclick="prevWorkerStep(2)">← Back</button>
+          <button class="btn-primary btn-primary-worker" onclick="completeWorkerRegistration()">Complete Setup ✓</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const workspaces={mumbai:["Reliance Industries — BKC","TCS — Powai","HDFC Bank HQ — Lower Parel","Wipro Technologies — Airoli","Infosys — BKC"],pune:["Infosys — Hinjewadi","Wipro — Kharadi","TCS — Rajiv Gandhi IT Park","Cognizant — Hadapsar","Tech Mahindra — Pimpri"],nagpur:["Haldirams — Industrial Area","Finolex Industries — Butibori","AIIMS Nagpur"],nashik:["Mahindra Vehicle Mfg — Ambad","Sula Vineyards","ABB India — Satpur"],aurangabad:["Bajaj Auto Plant — Waluj","Wockhardt Hospital","Endurance Technologies"],thane:["Lodha Business Park","Johnson & Johnson — Mulund","Raymond Ltd"],kolhapur:["Kirloskar Industries","Finolex Cables","Garware Wall Ropes"],"navi-mumbai":["TCS Campus — Vashi","Oracle India — Mindspace Airoli","Cognizant — Vashi"]};
+
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function selectRole(r){showPage(r==='admin'?'page-admin-login':'page-worker-login');}
+
+function handleAdminLogin(){
+  const e=document.getElementById('admin-email').value,c=document.getElementById('admin-code').value;
+  if(!e){showToast('Please enter your admin email');return;}
+  if(!c){showToast('Please enter your admin access code');return;}
+  showToast('Verifying admin credentials...');
+  sessionStorage.setItem('shiftai_role','admin');
+  sessionStorage.setItem('shiftai_name',cap(e.split('@')[0]));
+  setTimeout(()=>{window.location.href='dashboard-admin.html';},1000);
+}
+function handleWorkerLogin(){
+  const id=document.getElementById('worker-id').value,e=document.getElementById('worker-email').value;
+  if(!id){showToast('Please enter your Employee ID');return;}
+  if(!e){showToast('Please enter your email address');return;}
+  showToast('Signing in...');
+  sessionStorage.setItem('shiftai_role','worker');
+  sessionStorage.setItem('shiftai_name',cap(e.split('@')[0]));
+  sessionStorage.setItem('shiftai_empid',id);
+  setTimeout(()=>{window.location.href='dashboard-worker.html';},1000);
+}
+function cap(s){return s?s.charAt(0).toUpperCase()+s.slice(1):s;}
+function nextAdminStep(s){
+  if(s===2&&!document.getElementById('areg-email').value){showToast('Please enter your admin email');return;}
+  document.getElementById('areg-step'+(s-1)).style.display='none';
+  document.getElementById('areg-step'+s).style.display='block';
+  updateDots('a',s);
+}
+function prevAdminStep(s){document.getElementById('areg-step'+(s+1)).style.display='none';document.getElementById('areg-step'+s).style.display='block';updateDots('a',s);}
+function completeAdminRegistration(){
+  const name=document.getElementById('areg-fname').value||'Admin';
+  sessionStorage.setItem('shiftai_role','admin');sessionStorage.setItem('shiftai_name',name);
+  showToast('Admin account created! Welcome 🎉');
+  setTimeout(()=>{window.location.href='dashboard-admin.html';},900);
+}
+function nextWorkerStep(s){
+  if(s===2&&!document.getElementById('wreg-email').value){showToast('Please enter your email');return;}
+  if(s===3&&!document.getElementById('wreg-position').value){showToast('Please select your position');return;}
+  document.getElementById('wreg-step'+(s-1)).style.display='none';
+  document.getElementById('wreg-step'+s).style.display='block';
+  updateDots('w',s);
+}
+function prevWorkerStep(s){document.getElementById('wreg-step'+(s+1)).style.display='none';document.getElementById('wreg-step'+s).style.display='block';updateDots('w',s);}
+function completeWorkerRegistration(){
+  const name=document.getElementById('wreg-fname').value||'Worker';
+  sessionStorage.setItem('shiftai_role','worker');sessionStorage.setItem('shiftai_name',name);
+  showToast('Account created! Welcome to SmartShiftAI 🎉');
+  setTimeout(()=>{window.location.href='dashboard-worker.html';},900);
+}
+function updateDots(p,cur){
+  for(let i=1;i<=3;i++){
+    const d=document.getElementById(p+'step'+i);if(!d)continue;
+    const t=p==='a'?'admin':'worker';d.className='step-dot step-dot-'+t;
+    if(i<cur)d.classList.add('done');if(i===cur)d.classList.add('active');
+  }
+}
+function fillWorkspaces(cId,wId){
+  const city=document.getElementById(cId).value,sel=document.getElementById(wId);sel.innerHTML='';
+  (workspaces[city]||[]).forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;sel.appendChild(o);});
+}
+function selectChip(el,grp,role){el.closest('.position-grid').querySelectorAll('.position-chip').forEach(c=>{c.classList.remove('selected-admin','selected-worker');});el.classList.add('selected-'+role);}
+function toggleAccess(el){el.classList.toggle('selected');}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
+window.addEventListener('load',()=>{setTimeout(()=>{const l=document.getElementById('loader');l.style.opacity='0';setTimeout(()=>l.style.display='none',400);},1400);});
+</script>
+</body>
+</html>

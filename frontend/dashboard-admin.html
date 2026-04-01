@@ -1,0 +1,2367 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartShiftAI — Admin Dashboard</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:wght@300;400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --yellow: #F9F0C8;
+      --yellow-mid: #F2E07A;
+      --yellow-deep: #E8CC3A;
+      --blue: #C8DCF0;
+      --blue-mid: #7AAEDB;
+      --blue-deep: #3A7FBF;
+      --blue-dark: #1E4E7A;
+      --cream: #FDFAF0;
+      --text: #1A2A3A;
+      --muted: #6A7E92;
+      --shadow: 0 4px 24px rgba(58, 127, 191, 0.12);
+      --shadow-lg: 0 12px 48px rgba(58, 127, 191, 0.18);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --admin-accent: #7C3AED;
+      --admin-light: #EDE9FE;
+      --admin-mid: #A78BFA;
+      --green: #22C55E;
+      --green-light: #DCFCE7;
+      --red: #EF4444;
+      --red-light: #FEE2E2;
+      --orange: #F97316;
+      --orange-light: #FFEDD5;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #F4F7FB;
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 256px;
+      background: var(--blue-dark);
+      padding: 26px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      flex-shrink: 0;
+      z-index: 100;
+    }
+
+    .sidebar-logo {
+      font-family: 'Fraunces', serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: white;
+      padding: 0 10px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sidebar-logo span {
+      color: var(--yellow-mid);
+    }
+
+    .rbadge {
+      background: rgba(167, 139, 250, 0.25);
+      color: var(--admin-mid);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 3px 9px;
+      border-radius: 50px;
+      text-transform: uppercase;
+    }
+
+    .s-sec {
+      font-size: 0.68rem;
+      color: rgba(255, 255, 255, 0.36);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 14px 12px 4px;
+    }
+
+    .s-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 13px;
+      border-radius: 9px;
+      color: rgba(255, 255, 255, 0.62);
+      font-size: 0.87rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .s-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: white;
+    }
+
+    .s-item.active {
+      background: rgba(122, 174, 219, 0.2);
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .s-item .ic {
+      font-size: 1rem;
+      width: 18px;
+      text-align: center;
+    }
+
+    .s-spacer {
+      flex: 1;
+    }
+
+    .main {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 34px;
+      background: white;
+      border-bottom: 1.5px solid rgba(122, 174, 219, 0.15);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .topbar-left h2 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.45rem;
+      font-weight: 600;
+      color: var(--blue-dark);
+    }
+
+    .topbar-left p {
+      font-size: 0.83rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tbtn {
+      padding: 9px 17px;
+      border-radius: 50px;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.83rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tbtn-ai {
+      background: linear-gradient(135deg, var(--admin-accent), #5B21B6);
+      color: white;
+      box-shadow: 0 3px 12px rgba(124, 58, 237, 0.28);
+    }
+
+    .tbtn-ai:hover {
+      transform: translateY(-1px);
+    }
+
+    .tbtn-out {
+      background: white;
+      color: var(--blue-dark);
+      border: 1.5px solid rgba(122, 174, 219, 0.4);
+    }
+
+    .tbtn-out:hover {
+      border-color: var(--blue-mid);
+      background: var(--blue);
+    }
+
+    .content {
+      padding: 26px 34px;
+    }
+
+    /* KPI */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .kpi {
+      background: white;
+      border-radius: var(--radius);
+      padding: 19px 21px;
+      border: 1.5px solid rgba(122, 174, 219, 0.13);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s;
+      cursor: default;
+    }
+
+    .kpi:hover {
+      transform: translateY(-3px);
+    }
+
+    .kpi::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+    }
+
+    .kpi:nth-child(1)::before {
+      background: linear-gradient(90deg, #F2E07A, #E8CC3A);
+    }
+
+    .kpi:nth-child(2)::before {
+      background: linear-gradient(90deg, #7AAEDB, #3A7FBF);
+    }
+
+    .kpi:nth-child(3)::before {
+      background: linear-gradient(90deg, #86EFAC, #22C55E);
+    }
+
+    .kpi:nth-child(4)::before {
+      background: linear-gradient(90deg, #C4B5FD, #7C3AED);
+    }
+
+    .kpi-ico {
+      font-size: 1.45rem;
+      margin-bottom: 8px;
+    }
+
+    .kpi-v {
+      font-family: 'Fraunces', serif;
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: var(--blue-dark);
+    }
+
+    .kpi-l {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    .kpi-c {
+      font-size: 0.76rem;
+      font-weight: 600;
+      margin-top: 5px;
+    }
+
+    .up {
+      color: var(--green);
+    }
+
+    .dn {
+      color: var(--red);
+    }
+
+    /* AI BANNER */
+    .ai-banner {
+      background: linear-gradient(135deg, #1E4E7A, #0D3258);
+      border-radius: var(--radius);
+      padding: 22px 28px;
+      display: flex;
+      align-items: flex-start;
+      gap: 24px;
+      margin-bottom: 22px;
+    }
+
+    .aib-left {
+      flex: 1;
+    }
+
+    .aib-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1.15rem;
+      color: white;
+      margin-bottom: 5px;
+    }
+
+    .aib-sub {
+      font-size: 0.82rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 12px;
+    }
+
+    .aib-insights {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .aib-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 0.81rem;
+      color: rgba(255, 255, 255, 0.87);
+    }
+
+    .aib-row b {
+      color: var(--yellow-mid);
+    }
+
+    .aib-chart {
+      min-width: 200px;
+    }
+
+    .fcast-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 68px;
+    }
+
+    .fbar {
+      flex: 1;
+      border-radius: 3px 3px 0 0;
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    .fbar.hi {
+      background: var(--yellow-mid);
+    }
+
+    .fcast-lbls {
+      display: flex;
+      gap: 4px;
+      margin-top: 5px;
+    }
+
+    .flbl {
+      flex: 1;
+      text-align: center;
+      font-size: 0.66rem;
+      color: rgba(255, 255, 255, 0.42);
+    }
+
+    .wpred {
+      background: rgba(255, 255, 255, 0.09);
+      border-radius: 9px;
+      padding: 9px 12px;
+      text-align: center;
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.65);
+    }
+
+    .wpred span {
+      font-family: 'Fraunces', serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--yellow-mid);
+      display: block;
+    }
+
+    /* TASKS */
+    .sec-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--blue-dark);
+      margin-bottom: 13px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .sec-badge {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--muted);
+      background: var(--blue);
+      padding: 3px 10px;
+      border-radius: 50px;
+    }
+
+    .tasks-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 13px;
+      margin-bottom: 24px;
+    }
+
+    .tc {
+      background: white;
+      border-radius: var(--radius);
+      padding: 17px 19px;
+      border: 1.5px solid rgba(122, 174, 219, 0.14);
+      box-shadow: var(--shadow);
+      transition: all 0.2s;
+    }
+
+    .tc:hover {
+      border-color: var(--blue-mid);
+      transform: translateY(-2px);
+    }
+
+    .tc-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 9px;
+    }
+
+    .tc-name {
+      font-weight: 600;
+      font-size: 0.91rem;
+      color: var(--blue-dark);
+    }
+
+    .tc-dept {
+      font-size: 0.73rem;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    .pri {
+      padding: 3px 9px;
+      border-radius: 50px;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    .pri-h {
+      background: var(--red-light);
+      color: var(--red);
+    }
+
+    .pri-m {
+      background: var(--orange-light);
+      color: var(--orange);
+    }
+
+    .pri-l {
+      background: var(--green-light);
+      color: var(--green);
+    }
+
+    .tc-hrs {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .hrs-txt {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .hrs-txt b {
+      color: var(--text);
+    }
+
+    .req-workers {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.77rem;
+      color: var(--admin-accent);
+      font-weight: 600;
+      background: var(--admin-light);
+      padding: 3px 9px;
+      border-radius: 50px;
+    }
+
+    .pb {
+      height: 6px;
+      background: #EEF2F8;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+
+    .pf {
+      height: 100%;
+      border-radius: 3px;
+    }
+
+    .pf-blue {
+      background: linear-gradient(90deg, var(--blue-mid), var(--blue-deep));
+    }
+
+    .pf-green {
+      background: linear-gradient(90deg, #86EFAC, #22C55E);
+    }
+
+    .pf-red {
+      background: linear-gradient(90deg, #FCA5A5, #EF4444);
+    }
+
+    .pl {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .assigned-workers {
+      margin-top: 9px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .aw-chip {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: #F8FAFD;
+      border: 1px solid rgba(122, 174, 219, 0.25);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 0.72rem;
+      color: var(--blue-dark);
+    }
+
+    .aw-av {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: white;
+    }
+
+    /* WORKERS TABLE */
+    .wtable-wrap {
+      background: white;
+      border-radius: var(--radius);
+      border: 1.5px solid rgba(122, 174, 219, 0.14);
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+
+    .wt-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 17px 22px;
+      border-bottom: 1px solid rgba(122, 174, 219, 0.1);
+    }
+
+    .filters {
+      display: flex;
+      gap: 7px;
+    }
+
+    .fc {
+      padding: 5px 13px;
+      border-radius: 50px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1.5px solid rgba(122, 174, 219, 0.28);
+      background: white;
+      color: var(--muted);
+      transition: all 0.2s;
+    }
+
+    .fc.active,
+    .fc:hover {
+      background: var(--blue-dark);
+      color: white;
+      border-color: var(--blue-dark);
+    }
+
+    .wt {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .wt th {
+      font-size: 0.74rem;
+      color: var(--muted);
+      font-weight: 600;
+      text-align: left;
+      padding: 9px 15px;
+      letter-spacing: 0.04em;
+      background: #F8FAFD;
+      border-bottom: 1.5px solid rgba(122, 174, 219, 0.1);
+    }
+
+    .wt td {
+      padding: 12px 15px;
+      font-size: 0.84rem;
+      border-bottom: 1px solid rgba(122, 174, 219, 0.07);
+      vertical-align: middle;
+    }
+
+    .wt tr:last-child td {
+      border-bottom: none;
+    }
+
+    .wt tr:hover td {
+      background: #FAFCFF;
+    }
+
+    .ei {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .eav {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .enm {
+      font-weight: 600;
+      font-size: 0.86rem;
+      color: var(--blue-dark);
+    }
+
+    .erl {
+      font-size: 0.73rem;
+      color: var(--muted);
+    }
+
+    .hbar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hbar {
+      width: 88px;
+      height: 7px;
+      background: #EEF2F8;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .hf {
+      height: 100%;
+      border-radius: 3px;
+    }
+
+    .hf-ok {
+      background: linear-gradient(90deg, #7AAEDB, #3A7FBF);
+    }
+
+    .hf-full {
+      background: linear-gradient(90deg, #86EFAC, #22C55E);
+    }
+
+    .hf-over {
+      background: linear-gradient(90deg, #FCA5A5, #EF4444);
+    }
+
+    .htxt {
+      font-size: 0.76rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .tpills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .tpill {
+      padding: 2px 8px;
+      border-radius: 5px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      background: var(--blue);
+      color: var(--blue-dark);
+    }
+
+    .wpct-wrap {
+      text-align: center;
+    }
+
+    .wpct {
+      font-family: 'Fraunces', serif;
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--blue-dark);
+    }
+
+    .wbar {
+      width: 58px;
+      height: 5px;
+      background: #EEF2F8;
+      border-radius: 3px;
+      overflow: hidden;
+      margin: 3px auto 0;
+    }
+
+    .wfill {
+      height: 100%;
+      border-radius: 3px;
+      background: var(--blue-mid);
+    }
+
+    .sp {
+      padding: 3px 10px;
+      border-radius: 50px;
+      font-size: 0.73rem;
+      font-weight: 700;
+    }
+
+    .sp-a {
+      background: var(--green-light);
+      color: var(--green);
+    }
+
+    .sp-i {
+      background: var(--yellow);
+      color: #7A6000;
+    }
+
+    .sp-o {
+      background: #F1F5F9;
+      color: #94A3B8;
+    }
+
+    .scb {
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+      accent-color: var(--admin-accent);
+    }
+
+    /* ASSIGN */
+    .assign-panel {
+      background: white;
+      border-radius: var(--radius);
+      border: 1.5px solid rgba(167, 139, 250, 0.3);
+      box-shadow: var(--shadow-lg);
+      padding: 20px 24px;
+      margin-bottom: 24px;
+      display: none;
+    }
+
+    .assign-panel.show {
+      display: block;
+    }
+
+    .ap-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .ap-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1rem;
+      color: var(--admin-accent);
+    }
+
+    .ap-sel {
+      padding: 7px 13px;
+      border-radius: 50px;
+      border: 1.5px solid var(--admin-mid);
+      background: var(--admin-light);
+      color: var(--admin-accent);
+      font-weight: 600;
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
+
+    .chips-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 14px;
+    }
+
+    .sel-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--admin-light);
+      border: 1.5px solid var(--admin-mid);
+      border-radius: 50px;
+      padding: 4px 12px;
+      font-size: 0.8rem;
+      color: var(--admin-accent);
+      font-weight: 600;
+    }
+
+    .sel-chip button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--admin-accent);
+      font-size: 0.88rem;
+    }
+
+    .ap-actions {
+      display: flex;
+      gap: 9px;
+    }
+
+    .apbtn {
+      padding: 9px 20px;
+      border-radius: 50px;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.86rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .apbtn-c {
+      background: linear-gradient(135deg, var(--admin-accent), #5B21B6);
+      color: white;
+    }
+
+    .apbtn-c:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(124, 58, 237, 0.32);
+    }
+
+    .apbtn-x {
+      background: #F1F5F9;
+      color: var(--muted);
+    }
+
+    /* CHARTS GRID */
+    .chart-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .cc {
+      background: white;
+      border-radius: var(--radius);
+      border: 1.5px solid rgba(122, 174, 219, 0.14);
+      box-shadow: var(--shadow);
+    }
+
+    .cc-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(122, 174, 219, 0.09);
+    }
+
+    .cc-title {
+      font-family: 'Fraunces', serif;
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: var(--blue-dark);
+    }
+
+    .cc-badge {
+      font-size: 0.73rem;
+      padding: 3px 10px;
+      border-radius: 50px;
+      background: var(--yellow);
+      color: var(--blue-dark);
+      font-weight: 600;
+    }
+
+    .cc-body {
+      padding: 16px 20px;
+    }
+
+    .legend {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 11px;
+    }
+
+    .leg {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.76rem;
+      color: var(--muted);
+    }
+
+    .ldot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+
+    .bars-area {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      height: 105px;
+      padding-bottom: 16px;
+      position: relative;
+    }
+
+    .bars-area::after {
+      content: '';
+      position: absolute;
+      bottom: 16px;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: rgba(122, 174, 219, 0.15);
+    }
+
+    .bg {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .bp {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      width: 100%;
+    }
+
+    .bar {
+      flex: 1;
+      border-radius: 4px 4px 0 0;
+      min-height: 4px;
+    }
+
+    .bar.d {
+      background: linear-gradient(180deg, #7AAEDB, #3A7FBF);
+    }
+
+    .bar.s {
+      background: linear-gradient(180deg, #F2E07A, #E8CC3A);
+    }
+
+    .blbl {
+      font-size: 0.68rem;
+      color: var(--muted);
+    }
+
+    /* TODAY */
+    .ov-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 14px 18px;
+    }
+
+    .ov-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 13px;
+      border-radius: 9px;
+    }
+
+    .ov-row.wr {
+      background: var(--green-light);
+    }
+
+    .ov-row.id {
+      background: var(--yellow);
+    }
+
+    .ov-row.of {
+      background: #F1F5F9;
+    }
+
+    .ov-l {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 0.86rem;
+      font-weight: 600;
+    }
+
+    .ov-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+
+    .ov-dot.wr {
+      background: var(--green);
+    }
+
+    .ov-dot.id {
+      background: #D97706;
+    }
+
+    .ov-dot.of {
+      background: #94A3B8;
+    }
+
+    .ov-cnt {
+      font-family: 'Fraunces', serif;
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--blue-dark);
+    }
+
+    .ov-names {
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .shift-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 0 18px 16px;
+    }
+
+    .sr {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: #F8FAFD;
+      font-size: 0.81rem;
+    }
+
+    .sr-name {
+      flex: 1;
+      font-weight: 500;
+      color: var(--blue-dark);
+    }
+
+    .sb {
+      padding: 3px 9px;
+      border-radius: 50px;
+      font-size: 0.71rem;
+      font-weight: 700;
+    }
+
+    .sb-m {
+      background: var(--yellow);
+      color: #7A6000;
+    }
+
+    .sb-e {
+      background: var(--blue);
+      color: var(--blue-dark);
+    }
+
+    .sb-n {
+      background: #1E293B;
+      color: white;
+    }
+
+    .ss {
+      font-size: 0.73rem;
+      padding: 3px 8px;
+      border-radius: 50px;
+    }
+
+    .ss-a {
+      background: var(--green-light);
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    .ss-u {
+      background: var(--blue);
+      color: var(--blue-dark);
+      font-weight: 600;
+    }
+
+    .ss-o {
+      background: #F1F5F9;
+      color: #94A3B8;
+    }
+
+    /* WEEKLY */
+    .weekly-card {
+      background: white;
+      border-radius: var(--radius);
+      border: 1.5px solid rgba(122, 174, 219, 0.14);
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+    }
+
+    .wb {
+      padding: 18px 22px;
+    }
+
+    .we-row {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      margin-bottom: 13px;
+      padding-bottom: 13px;
+      border-bottom: 1px solid rgba(122, 174, 219, 0.09);
+    }
+
+    .we-row:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .wav {
+      width: 33px;
+      height: 33px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .we-name {
+      font-weight: 600;
+      font-size: 0.86rem;
+      color: var(--blue-dark);
+      min-width: 128px;
+    }
+
+    .we-sub {
+      font-size: 0.71rem;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .we-tasks {
+      flex: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .wtp {
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-size: 0.69rem;
+      font-weight: 600;
+    }
+
+    .wt-done {
+      background: var(--green-light);
+      color: var(--green);
+    }
+
+    .wt-prog {
+      background: var(--blue);
+      color: var(--blue-dark);
+    }
+
+    .wt-pend {
+      background: #F1F5F9;
+      color: #94A3B8;
+    }
+
+    .we-pct-wrap {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .we-pct {
+      font-family: 'Fraunces', serif;
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: var(--blue-dark);
+    }
+
+    .we-bar {
+      width: 76px;
+      height: 5px;
+      background: #EEF2F8;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 3px;
+    }
+
+    .we-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--blue-mid), var(--blue-deep));
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 26px;
+      right: 26px;
+      background: var(--blue-dark);
+      color: white;
+      padding: 12px 18px;
+      border-radius: 11px;
+      font-size: 0.86rem;
+      z-index: 9999;
+      transform: translateY(60px);
+      opacity: 0;
+      transition: all 0.3s;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* =============================================
+   AI PREDICTION PANEL
+   ============================================= */
+    .ai-predict-panel {
+      background: white;
+      border-radius: var(--radius);
+      border: 1.5px solid rgba(167, 139, 250, 0.3);
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 22px;
+      overflow: hidden;
+    }
+
+    .aip-header {
+      background: linear-gradient(135deg, #2D1B69, #4C1D95);
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .aip-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .aip-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1.1rem;
+      color: white;
+      margin: 0;
+    }
+
+    .aip-subtitle {
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: 2px;
+    }
+
+    .aip-badge {
+      background: rgba(167, 139, 250, 0.3);
+      color: #C4B5FD;
+      padding: 4px 12px;
+      border-radius: 50px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      border: 1px solid rgba(167, 139, 250, 0.4);
+    }
+
+    .aip-body {
+      padding: 22px 24px;
+    }
+
+    .aip-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .aip-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--blue-dark);
+      margin-bottom: 6px;
+      letter-spacing: 0.03em;
+    }
+
+    .aip-select,
+    .aip-input,
+    .aip-textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid rgba(122, 174, 219, 0.4);
+      border-radius: var(--radius-sm);
+      background: #FAFCFF;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      appearance: none;
+    }
+
+    .aip-select:focus,
+    .aip-input:focus,
+    .aip-textarea:focus {
+      border-color: var(--admin-mid);
+      box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.18);
+    }
+
+    .aip-select-wrap {
+      position: relative;
+    }
+
+    .aip-select-wrap::after {
+      content: '▾';
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--admin-mid);
+      pointer-events: none;
+    }
+
+    .aip-textarea {
+      min-height: 72px;
+      resize: vertical;
+      grid-column: 1/-1;
+    }
+
+    .aip-slider-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .aip-slider {
+      flex: 1;
+      accent-color: var(--admin-accent);
+    }
+
+    .aip-slider-val {
+      min-width: 30px;
+      text-align: center;
+      font-family: 'Fraunces', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--admin-accent);
+    }
+
+    .aip-run-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 28px;
+      background: linear-gradient(135deg, var(--admin-accent), #5B21B6);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s;
+      box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3);
+    }
+
+    .aip-run-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(124, 58, 237, 0.45);
+    }
+
+    .aip-run-btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .aip-spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Results */
+    .aip-results {
+      margin-top: 22px;
+      display: none;
+      border-top: 1.5px solid rgba(167, 139, 250, 0.2);
+      padding-top: 20px;
+    }
+
+    .aip-results.show {
+      display: block;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .aip-results-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .aip-stat-card {
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .aip-stat-card.purple {
+      background: linear-gradient(135deg, #EDE9FE, #DDD6FE);
+      border: 1.5px solid rgba(167, 139, 250, 0.35);
+    }
+
+    .aip-stat-card.blue {
+      background: linear-gradient(135deg, #E0F2FE, #BAE6FD);
+      border: 1.5px solid rgba(122, 174, 219, 0.35);
+    }
+
+    .aip-stat-ico {
+      font-size: 2rem;
+    }
+
+    .aip-stat-val {
+      font-family: 'Fraunces', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--blue-dark);
+    }
+
+    .aip-stat-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    .aip-emp-title {
+      font-family: 'Fraunces', serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--blue-dark);
+      margin-bottom: 11px;
+    }
+
+    .aip-emp-list {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .aip-emp-card {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 11px 16px;
+      background: #F8FAFD;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid rgba(122, 174, 219, 0.15);
+      transition: border-color 0.2s;
+    }
+
+    .aip-emp-card:hover {
+      border-color: var(--admin-mid);
+    }
+
+    .aip-emp-av {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--admin-accent), #5B21B6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .aip-emp-name {
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: var(--blue-dark);
+    }
+
+    .aip-emp-skill {
+      font-size: 0.74rem;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    .aip-emp-right {
+      margin-left: auto;
+      text-align: right;
+    }
+
+    .aip-match-pct {
+      font-family: 'Fraunces', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--admin-accent);
+    }
+
+    .aip-match-bar {
+      width: 64px;
+      height: 5px;
+      background: #EEF2F8;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 3px;
+      margin-left: auto;
+    }
+
+    .aip-match-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--admin-mid), var(--admin-accent));
+    }
+
+    .aip-error {
+      background: #FEE2E2;
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      color: #B91C1C;
+      font-size: 0.86rem;
+      margin-top: 14px;
+      display: none;
+    }
+
+    .aip-error.show {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="toast" id="toast"></div>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-logo">SmartShift<span>AI</span> <span class="rbadge">Admin</span></div>
+      <div class="s-sec">Overview</div>
+      <div class="s-item active" onclick="setActive(this)" id="nav-dashboard"><span class="ic">🏠</span>Dashboard</div>
+      <div class="s-item" onclick="setActive(this); showToast('📊 Analytics — coming soon')"><span
+          class="ic">📊</span>Analytics</div>
+      <div class="s-sec">Workforce</div>
+      <div class="s-item" onclick="setActive(this); showToast('👥 Employees — coming soon')"><span
+          class="ic">👥</span>Employees</div>
+      <div class="s-item" onclick="setActive(this); showToast('📅 Shift Schedules — coming soon')"><span
+          class="ic">📅</span>Shift Schedules</div>
+      <div class="s-item"
+        onclick="setActive(this); document.querySelector('.ai-predict-panel').scrollIntoView({behavior:'smooth'})"><span
+          class="ic">🤖</span>AI Predictions</div>
+      <div class="s-sec">Management</div>
+      <div class="s-item" onclick="setActive(this); showToast('📋 Tasks — coming soon')"><span class="ic">📋</span>Tasks
+      </div>
+      <div class="s-item" onclick="setActive(this); showToast('💰 Cost Reports — coming soon')"><span
+          class="ic">💰</span>Cost Reports</div>
+      <div class="s-item" onclick="setActive(this); showToast('⚙️ Settings — coming soon')"><span
+          class="ic">⚙️</span>Settings</div>
+      <div class="s-spacer"></div>
+      <div class="s-item" onclick="window.location.href='index.html'"><span class="ic">🚪</span>Sign Out</div>
+    </aside>
+    <div class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <h2>Good Morning, <span id="uname">Admin</span> 👋</h2>
+          <p id="dash-date"></p>
+        </div>
+        <div class="topbar-right">
+          <button class="tbtn tbtn-out" onclick="showToast('Refreshing data...')">🔄 Refresh</button>
+          <button class="tbtn tbtn-ai" onclick="showToast('🤖 Running AI optimization...')">🤖 Run AI
+            Scheduling</button>
+        </div>
+      </div>
+      <div class="content">
+
+        <!-- KPIs -->
+        <div class="kpi-grid">
+          <div class="kpi">
+            <div class="kpi-ico">👥</div>
+            <div class="kpi-v">247</div>
+            <div class="kpi-l">Total Employees</div>
+            <div class="kpi-c up">↑ 4 new this month</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-ico">📅</div>
+            <div class="kpi-v">18</div>
+            <div class="kpi-l">Active Shifts Today</div>
+            <div class="kpi-c up">↑ 92% staffed</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-ico">🤖</div>
+            <div class="kpi-v">98.2%</div>
+            <div class="kpi-l">AI Forecast Accuracy</div>
+            <div class="kpi-c up">↑ 1.3% this week</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-ico">💰</div>
+            <div class="kpi-v">₹2.4L</div>
+            <div class="kpi-l">Cost Saved This Month</div>
+            <div class="kpi-c up">↑ 38% vs last month</div>
+          </div>
+        </div>
+
+        <!-- AI BANNER -->
+        <div class="ai-banner">
+          <div class="aib-left">
+            <div class="aib-title">🤖 AI Demand Forecast — Next 7 Days</div>
+            <div class="aib-sub">Based on 18 months of historical data, seasonality &amp; real-time signals</div>
+            <div class="aib-insights">
+              <div class="aib-row">📈 Peak demand expected <b>Thursday &amp; Friday</b> — recommend +12 staff</div>
+              <div class="aib-row">⚠️ 3 shift gaps on <b>Saturday Night</b> — auto-scheduling available</div>
+              <div class="aib-row">✅ Workload distribution is <b>94% balanced</b> across all departments</div>
+              <div class="aib-row">💡 Platform Migration task needs <b>3 more workers</b> to meet deadline</div>
+            </div>
+          </div>
+          <div class="aib-chart">
+            <div class="fcast-bars">
+              <div class="fbar" style="height:44%"></div>
+              <div class="fbar" style="height:57%"></div>
+              <div class="fbar" style="height:53%"></div>
+              <div class="fbar hi" style="height:91%"></div>
+              <div class="fbar hi" style="height:100%"></div>
+              <div class="fbar" style="height:67%"></div>
+              <div class="fbar" style="height:46%"></div>
+            </div>
+            <div class="fcast-lbls">
+              <div class="flbl">M</div>
+              <div class="flbl">T</div>
+              <div class="flbl">W</div>
+              <div class="flbl">T</div>
+              <div class="flbl">F</div>
+              <div class="flbl">S</div>
+              <div class="flbl">S</div>
+            </div>
+            <div class="wpred"><span>34</span>Workers Predicted for Peak Day</div>
+          </div>
+        </div>
+
+        <!-- AI PREDICTION PANEL -->
+        <div class="ai-predict-panel">
+          <div class="aip-header">
+            <div class="aip-header-left">
+              <div>
+                <div class="aip-title">🤖 AI Task Prediction</div>
+                <div class="aip-subtitle">Enter task details — AI predicts team size, duration &amp; best employees
+                </div>
+              </div>
+            </div>
+            <div class="aip-badge">SmartShiftAI</div>
+          </div>
+          <div class="aip-body">
+            <div class="aip-grid">
+              <div class="aip-group">
+                <label for="aip-type">Task Type</label>
+                <div class="aip-select-wrap">
+                  <select class="aip-select" id="aip-type">
+                    <option value="Backend Development">Backend Development</option>
+                    <option value="Frontend Development">Frontend Development</option>
+                    <option value="Machine Learning">Machine Learning</option>
+                    <option value="Data Science">Data Science</option>
+                    <option value="DevOps">DevOps</option>
+                    <option value="Customer Service">Customer Service</option>
+                    <option value="Operations Management">Operations Management</option>
+                    <option value="Security Management">Security Management</option>
+                    <option value="Human Resources">Human Resources</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Quality Assurance">Quality Assurance</option>
+                  </select>
+                </div>
+              </div>
+              <div class="aip-group">
+                <label for="aip-priority">Priority</label>
+                <div class="aip-select-wrap">
+                  <select class="aip-select" id="aip-priority">
+                    <option value="Low">🟢 Low</option>
+                    <option value="Medium" selected>🟡 Medium</option>
+                    <option value="High">🔴 High</option>
+                    <option value="Critical">⚡ Critical</option>
+                  </select>
+                </div>
+              </div>
+              <div class="aip-group" style="grid-column:1/-1">
+                <label for="aip-desc">Task Description</label>
+                <textarea class="aip-textarea" id="aip-desc"
+                  placeholder="Describe the task in detail — e.g. Build a scalable REST API for payment processing with authentication and logging..."></textarea>
+              </div>
+              <div class="aip-group" style="grid-column:1/-1">
+                <label for="aip-complexity">Complexity Score <span id="aip-cval"
+                    style="color:var(--admin-accent);font-weight:700;">5</span> / 10</label>
+                <div class="aip-slider-wrap">
+                  <input type="range" class="aip-slider" id="aip-complexity" min="1" max="10" value="5"
+                    oninput="document.getElementById('aip-cval').textContent=this.value">
+                </div>
+              </div>
+            </div>
+            <button class="aip-run-btn" id="aip-run-btn" onclick="runAIPrediction()">
+              <div class="aip-spinner" id="aip-spinner"></div>
+              <span id="aip-btn-txt">🚀 Run AI Prediction</span>
+            </button>
+            <div class="aip-error" id="aip-error"></div>
+
+            <!-- RESULTS -->
+            <div class="aip-results" id="aip-results">
+              <div class="aip-results-grid">
+                <div class="aip-stat-card purple">
+                  <div class="aip-stat-ico">👥</div>
+                  <div>
+                    <div class="aip-stat-val" id="res-team">—</div>
+                    <div class="aip-stat-label">Recommended Team Size</div>
+                  </div>
+                </div>
+                <div class="aip-stat-card blue">
+                  <div class="aip-stat-ico">📅</div>
+                  <div>
+                    <div class="aip-stat-val" id="res-dur">—</div>
+                    <div class="aip-stat-label">Estimated Duration (days)</div>
+                  </div>
+                </div>
+              </div>
+              <div class="aip-emp-title">🏆 Recommended Employees</div>
+              <div class="aip-emp-list" id="res-emp-list"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TASKS -->
+        <div class="sec-title">📋 Active Tasks <span class="sec-badge">6 This Week</span></div>
+        <div class="tasks-grid">
+          <div class="tc">
+            <div class="tc-head">
+              <div>
+                <div class="tc-name">Platform Migration</div>
+                <div class="tc-dept">IT / DevOps</div>
+              </div><span class="pri pri-h">High</span>
+            </div>
+            <div class="tc-hrs"><span class="hrs-txt">Hours: <b>42 / 60 hrs</b></span><span class="req-workers">🤖 Needs
+                5 workers</span></div>
+            <div class="pb">
+              <div class="pf pf-red" style="width:70%"></div>
+            </div>
+            <div class="pl"><span>In Progress</span><span>70%</span></div>
+            <div class="assigned-workers">
+              <div class="aw-chip">
+                <div class="aw-av" style="background:#7AAEDB">PD</div>Priya D.
+              </div>
+              <div class="aw-chip">
+                <div class="aw-av" style="background:#B87AE8">KJ</div>Kavya J.
+              </div>
+              <div class="aw-chip">
+                <div class="aw-av" style="background:#EF4444">RS</div>Rohan S.
+              </div>
+            </div>
+          </div>
+          <div class="tc">
+            <div class="tc-head">
+              <div>
+                <div class="tc-name">Customer Onboarding</div>
+                <div class="tc-dept">Customer Service</div>
+              </div><span class="pri pri-h">High</span>
+            </div>
+            <div class="tc-hrs"><span class="hrs-txt">Hours: <b>28 / 40 hrs</b></span><span class="req-workers">🤖 Needs
+                6 workers</span></div>
+            <div class="pb">
+              <div class="pf pf-blue" style="width:70%"></div>
+            </div>
+            <div class="pl"><span>In Progress</span><span>70%</span></div>
+            <div class="assigned-workers">
+              <div class="aw-chip">
+                <div class="aw-av" style="background:#5CBF7A">SK</div>Sneha K.
+              </div>
+              <div class="aw-chip">
+                <div class="aw-av" style="background:#F97316">PI</div>Pooja I.
+              </div>
+            </div>
+          </div>
+          <div class="tc">
+            <div class="tc-head">
+              <div>
+                <div class="tc-name">Warehouse Audit</div>
+                <div class="tc-dept">Operations</div>
+              </div><span class="pri pri-m">Medium</span>
+            </div>
+            <div class="tc-hrs"><span class="hrs-txt">Hours: <b>15 / 24 hrs</b></span><span class="req-workers">🤖 Needs
+                3 workers</span></div>
+            <div class="pb">
+              <div class="pf pf-blue" style="width:62%"></div>
+            </div>
+            <div class="pl"><span>In Progress</span><span>62%</span></div>
+            <div class="assigned-workers">
+              <div class="aw-chip">
+                <div class="aw-av" style="background:#E87AA8">RN</div>Rahul N.
+              </div>
+            </div>
+          </div>
+          <div class="tc">
+            <div class="tc-head">
+              <div>
+                <div class="tc-name">Monthly HR Report</div>
+                <div class="tc-dept">HR / Admin</div>
+              </div><span class="pri pri-m">Medium</span>
+            </div>
+            <div class="tc-hrs"><span class="hrs-txt">Hours: <b>14 / 16 hrs</b></span><span class="req-workers">🤖 Needs
+                2 workers</span></div>
+            <div class="pb">
+              <div class="pf pf-green" style="width:88%"></div>
+            </div>
+            <div class="pl"><span>Near Complete</span><span>88%</span></div>
+            <div class="assigned-workers">
+              <div class="aw-chip">
+                <div class="aw-av" style="background:#5CBF7A">SK</div>Sneha K.
+              </div>
+              <div class="aw-chip">
+                <div class="aw-av" style="background:#E87AA8">RN</div>Rahul N.
+              </div>
+            </div>
+          </div>
+          <div class="tc">
+            <div class="tc-head">
+              <div>
+                <div class="tc-name">Security Patrol Routes</div>
+                <div class="tc-dept">Security</div>
+              </div><span class="pri pri-l">Low</span>
+            </div>
+            <div class="tc-hrs"><span class="hrs-txt">Hours: <b>18 / 20 hrs</b></span><span class="req-workers">🤖 Needs
+                4 workers</span></div>
+            <div class="pb">
+              <div class="pf pf-green" style="width:90%"></div>
+            </div>
+            <div class="pl"><span>Almost Done</span><span>90%</span></div>
+            <div class="assigned-workers">
+              <div class="aw-chip">
+                <div class="aw-av" style="background:#E8CC3A">AP</div>Amit P.
+              </div>
+            </div>
+          </div>
+          <div class="tc">
+            <div class="tc-head">
+              <div>
+                <div class="tc-name">Data Analytics Sprint</div>
+                <div class="tc-dept">Data Science</div>
+              </div><span class="pri pri-h">High</span>
+            </div>
+            <div class="tc-hrs"><span class="hrs-txt">Hours: <b>8 / 32 hrs</b></span><span class="req-workers">🤖 Needs
+                4 workers</span></div>
+            <div class="pb">
+              <div class="pf pf-red" style="width:25%"></div>
+            </div>
+            <div class="pl"><span>Just Started</span><span>25%</span></div>
+            <div class="assigned-workers">
+              <div class="aw-chip">
+                <div class="aw-av" style="background:#B87AE8">KJ</div>Kavya J.
+              </div>
+              <div class="aw-chip">
+                <div class="aw-av" style="background:#7AAEDB">PD</div>Priya D.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- WORKERS TABLE -->
+        <div class="wtable-wrap">
+          <div class="wt-head">
+            <div class="sec-title" style="margin:0">👷 Worker Overview <span class="sec-badge" id="sel-lbl"
+                style="display:none"></span></div>
+            <div class="filters">
+              <div class="fc active" onclick="filterW('all',this)">All</div>
+              <div class="fc" onclick="filterW('active',this)">Working</div>
+              <div class="fc" onclick="filterW('idle',this)">Idle</div>
+              <div class="fc" onclick="filterW('off',this)">Off Today</div>
+            </div>
+          </div>
+          <table class="wt">
+            <thead>
+              <tr>
+                <th style="width:34px"><input type="checkbox" class="scb" id="sa" onchange="selAll(this)"></th>
+                <th>Employee</th>
+                <th>Shift</th>
+                <th>Hours (Done / Total)</th>
+                <th>Assigned Tasks</th>
+                <th>Weekly %</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="wtbody"></tbody>
+          </table>
+        </div>
+
+        <!-- ASSIGN PANEL -->
+        <div class="assign-panel" id="assign-panel">
+          <div class="ap-head">
+            <div class="ap-title">🤖 Assign Selected Workers to Task</div>
+            <select class="ap-sel" id="task-sel">
+              <option>Platform Migration</option>
+              <option>Customer Onboarding</option>
+              <option>Warehouse Audit</option>
+              <option>Monthly HR Report</option>
+              <option>Security Patrol Routes</option>
+              <option>Data Analytics Sprint</option>
+            </select>
+          </div>
+          <div class="chips-row" id="ap-chips"></div>
+          <div class="ap-actions">
+            <button class="apbtn apbtn-c" onclick="confirmAssign()">✓ Confirm Assignment</button>
+            <button class="apbtn apbtn-x" onclick="clearSel()">✕ Clear</button>
+          </div>
+        </div>
+
+        <!-- DEMAND vs SUPPLY + TODAY -->
+        <div class="chart-grid">
+          <div class="cc">
+            <div class="cc-head">
+              <div class="cc-title">Workforce Demand vs Supply</div>
+              <div class="cc-badge">This Week</div>
+            </div>
+            <div class="cc-body">
+              <div class="legend">
+                <div class="leg">
+                  <div class="ldot" style="background:var(--blue-mid)"></div>Demand
+                </div>
+                <div class="leg">
+                  <div class="ldot" style="background:var(--yellow-deep)"></div>Supply
+                </div>
+              </div>
+              <div class="bars-area">
+                <div class="bg">
+                  <div class="bp">
+                    <div class="bar d" style="height:62%"></div>
+                    <div class="bar s" style="height:55%"></div>
+                  </div>
+                  <div class="blbl">Mon</div>
+                </div>
+                <div class="bg">
+                  <div class="bp">
+                    <div class="bar d" style="height:78%"></div>
+                    <div class="bar s" style="height:72%"></div>
+                  </div>
+                  <div class="blbl">Tue</div>
+                </div>
+                <div class="bg">
+                  <div class="bp">
+                    <div class="bar d" style="height:84%"></div>
+                    <div class="bar s" style="height:88%"></div>
+                  </div>
+                  <div class="blbl">Wed</div>
+                </div>
+                <div class="bg">
+                  <div class="bp">
+                    <div class="bar d" style="height:95%"></div>
+                    <div class="bar s" style="height:80%"></div>
+                  </div>
+                  <div class="blbl">Thu</div>
+                </div>
+                <div class="bg">
+                  <div class="bp">
+                    <div class="bar d" style="height:100%"></div>
+                    <div class="bar s" style="height:91%"></div>
+                  </div>
+                  <div class="blbl">Fri</div>
+                </div>
+                <div class="bg">
+                  <div class="bp">
+                    <div class="bar d" style="height:65%"></div>
+                    <div class="bar s" style="height:72%"></div>
+                  </div>
+                  <div class="blbl">Sat</div>
+                </div>
+                <div class="bg">
+                  <div class="bp">
+                    <div class="bar d" style="height:42%"></div>
+                    <div class="bar s" style="height:47%"></div>
+                  </div>
+                  <div class="blbl">Sun</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="cc">
+            <div class="cc-head">
+              <div class="cc-title">Today's Overview</div>
+              <div class="cc-badge">Live</div>
+            </div>
+            <div class="ov-rows">
+              <div class="ov-row wr">
+                <div class="ov-l">
+                  <div class="ov-dot wr"></div>Working Now
+                </div>
+                <div>
+                  <div class="ov-cnt">12</div>
+                  <div class="ov-names">Priya, Rahul, Kavya +9</div>
+                </div>
+              </div>
+              <div class="ov-row id">
+                <div class="ov-l">
+                  <div class="ov-dot id"></div>Idle / Available
+                </div>
+                <div>
+                  <div class="ov-cnt">4</div>
+                  <div class="ov-names">Sneha, Vikram +2</div>
+                </div>
+              </div>
+              <div class="ov-row of">
+                <div class="ov-l">
+                  <div class="ov-dot of"></div>Off Today
+                </div>
+                <div>
+                  <div class="ov-cnt">2</div>
+                  <div class="ov-names">Amit, Rohan</div>
+                </div>
+              </div>
+            </div>
+            <div class="shift-rows">
+              <div class="sr"><span class="sr-name">Priya Desai</span><span class="sb sb-m">🌅 Morning</span><span
+                  class="ss ss-a">Active</span></div>
+              <div class="sr"><span class="sr-name">Rahul Nair</span><span class="sb sb-m">🌅 Morning</span><span
+                  class="ss ss-a">Active</span></div>
+              <div class="sr"><span class="sr-name">Sneha Kulkarni</span><span class="sb sb-e">☀️ Evening</span><span
+                  class="ss ss-u">Upcoming</span></div>
+              <div class="sr"><span class="sr-name">Kavya Joshi</span><span class="sb sb-e">☀️ Evening</span><span
+                  class="ss ss-a">Active</span></div>
+              <div class="sr"><span class="sr-name">Amit Patil</span><span class="sb sb-n">🌙 Night</span><span
+                  class="ss ss-o">Off Today</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- WEEKLY TASK COMPLETION -->
+        <div class="weekly-card">
+          <div class="cc-head" style="padding:16px 22px;border-bottom:1px solid rgba(122,174,219,0.09);">
+            <div class="cc-title">📆 Weekly Task Completion by Employee</div>
+            <div class="cc-badge">This Week</div>
+          </div>
+          <div class="wb">
+            <div class="we-row">
+              <div class="wav" style="background:var(--blue-mid)">PD</div>
+              <div>
+                <div class="we-name">Priya Desai</div>
+                <div class="we-sub">Software Engineer</div>
+              </div>
+              <div class="we-tasks">
+                <span class="wtp wt-done">✓ Platform Migration</span>
+                <span class="wtp wt-done">✓ Data Sprint</span>
+                <span class="wtp wt-prog">⟳ Analytics Report</span>
+              </div>
+              <div class="we-pct-wrap">
+                <div class="we-pct">82%</div>
+                <div class="we-bar">
+                  <div class="we-fill" style="width:82%"></div>
+                </div>
+              </div>
+            </div>
+            <div class="we-row">
+              <div class="wav" style="background:#E87AA8">RN</div>
+              <div>
+                <div class="we-name">Rahul Nair</div>
+                <div class="we-sub">Operations Manager</div>
+              </div>
+              <div class="we-tasks">
+                <span class="wtp wt-done">✓ Warehouse Audit</span>
+                <span class="wtp wt-done">✓ HR Report</span>
+                <span class="wtp wt-pend">○ Security Routes</span>
+              </div>
+              <div class="we-pct-wrap">
+                <div class="we-pct">67%</div>
+                <div class="we-bar">
+                  <div class="we-fill" style="width:67%"></div>
+                </div>
+              </div>
+            </div>
+            <div class="we-row">
+              <div class="wav" style="background:#5CBF7A">SK</div>
+              <div>
+                <div class="we-name">Sneha Kulkarni</div>
+                <div class="we-sub">HR Executive</div>
+              </div>
+              <div class="we-tasks">
+                <span class="wtp wt-done">✓ Customer Onboarding</span>
+                <span class="wtp wt-prog">⟳ HR Report</span>
+              </div>
+              <div class="we-pct-wrap">
+                <div class="we-pct">74%</div>
+                <div class="we-bar">
+                  <div class="we-fill" style="width:74%"></div>
+                </div>
+              </div>
+            </div>
+            <div class="we-row">
+              <div class="wav" style="background:#B87AE8">KJ</div>
+              <div>
+                <div class="we-name">Kavya Joshi</div>
+                <div class="we-sub">Data Scientist</div>
+              </div>
+              <div class="we-tasks">
+                <span class="wtp wt-done">✓ Data Analytics Sprint</span>
+                <span class="wtp wt-done">✓ Platform Migration</span>
+                <span class="wtp wt-done">✓ Analytics Report</span>
+              </div>
+              <div class="we-pct-wrap">
+                <div class="we-pct">95%</div>
+                <div class="we-bar">
+                  <div class="we-fill" style="width:95%"></div>
+                </div>
+              </div>
+            </div>
+            <div class="we-row">
+              <div class="wav" style="background:var(--blue-deep)">VM</div>
+              <div>
+                <div class="we-name">Vikram More</div>
+                <div class="we-sub">Finance Manager</div>
+              </div>
+              <div class="we-tasks">
+                <span class="wtp wt-done">✓ Cost Audit</span>
+                <span class="wtp wt-pend">○ Monthly Finance Report</span>
+              </div>
+              <div class="we-pct-wrap">
+                <div class="we-pct">50%</div>
+                <div class="we-bar">
+                  <div class="we-fill" style="width:50%"></div>
+                </div>
+              </div>
+            </div>
+            <div class="we-row">
+              <div class="wav" style="background:#E8CC3A">AP</div>
+              <div>
+                <div class="we-name">Amit Patil</div>
+                <div class="we-sub">Security Supervisor</div>
+              </div>
+              <div class="we-tasks">
+                <span class="wtp wt-prog">⟳ Security Patrol Routes</span>
+              </div>
+              <div class="we-pct-wrap">
+                <div class="we-pct">30%</div>
+                <div class="we-bar">
+                  <div class="we-fill" style="width:30%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const workers = [
+      { id: 'EMP-001', name: 'Priya Desai', ini: 'PD', col: '#7AAEDB', role: 'Software Engineer', shift: '🌅 Morning', hoursDone: 42, hoursTotal: 48, tasks: ['Platform Migration', 'Data Sprint'], wkPct: 82, status: 'active' },
+      { id: 'EMP-002', name: 'Rahul Nair', ini: 'RN', col: '#E87AA8', role: 'Operations Manager', shift: '🌅 Morning', hoursDone: 38, hoursTotal: 48, tasks: ['Warehouse Audit', 'HR Report'], wkPct: 67, status: 'active' },
+      { id: 'EMP-003', name: 'Sneha Kulkarni', ini: 'SK', col: '#5CBF7A', role: 'HR Executive', shift: '☀️ Evening', hoursDone: 30, hoursTotal: 48, tasks: ['Customer Onboarding'], wkPct: 74, status: 'idle' },
+      { id: 'EMP-004', name: 'Amit Patil', ini: 'AP', col: '#E8CC3A', role: 'Security Supervisor', shift: '🌙 Night', hoursDone: 0, hoursTotal: 8, tasks: ['Security Routes'], wkPct: 30, status: 'off' },
+      { id: 'EMP-005', name: 'Kavya Joshi', ini: 'KJ', col: '#B87AE8', role: 'Data Scientist', shift: '☀️ Evening', hoursDone: 46, hoursTotal: 48, tasks: ['Data Analytics', 'Platform Migration'], wkPct: 95, status: 'active' },
+      { id: 'EMP-006', name: 'Vikram More', ini: 'VM', col: '#3A7FBF', role: 'Finance Manager', shift: '🔄 Flexible', hoursDone: 24, hoursTotal: 48, tasks: ['Cost Audit'], wkPct: 50, status: 'idle' },
+      { id: 'EMP-007', name: 'Rohan Shah', ini: 'RS', col: '#EF4444', role: 'DevOps Engineer', shift: '🌅 Morning', hoursDone: 0, hoursTotal: 8, tasks: ['Platform Migration'], wkPct: 15, status: 'off' },
+      { id: 'EMP-008', name: 'Pooja Iyer', ini: 'PI', col: '#F97316', role: 'Customer Service Rep', shift: '☀️ Evening', hoursDone: 36, hoursTotal: 40, tasks: ['Customer Onboarding'], wkPct: 88, status: 'active' },
+    ];
+    let sel = new Set(), curFilter = 'all';
+
+    function renderTable(f) {
+      curFilter = f;
+      const data = f === 'all' ? workers : workers.filter(w => w.status === f);
+      document.getElementById('wtbody').innerHTML = data.map(w => {
+        const pct = Math.round(w.hoursDone / w.hoursTotal * 100);
+        const fc = pct >= 90 ? 'hf-full' : pct < 40 ? 'hf-over' : 'hf-ok';
+        const sc = w.status === 'active' ? 'sp-a' : w.status === 'idle' ? 'sp-i' : 'sp-o';
+        const st = w.status === 'active' ? 'Working' : w.status === 'idle' ? 'Idle' : 'Off Today';
+        const chk = sel.has(w.id) ? 'checked' : '';
+        return `<tr>
+      <td><input type="checkbox" class="scb" ${chk} onchange="togW('${w.id}',this)"></td>
+      <td><div class="ei"><div class="eav" style="background:${w.col}">${w.ini}</div><div><div class="enm">${w.name}</div><div class="erl">${w.role}</div></div></div></td>
+      <td>${w.shift}</td>
+      <td><div class="hbar-wrap"><div class="hbar"><div class="hf ${fc}" style="width:${pct}%"></div></div><div class="htxt">${w.hoursDone}/${w.hoursTotal} hrs</div></div></td>
+      <td><div class="tpills">${w.tasks.map(t => `<span class="tpill">${t}</span>`).join('')}</div></td>
+      <td><div class="wpct-wrap"><div class="wpct">${w.wkPct}%</div><div class="wbar"><div class="wfill" style="width:${w.wkPct}%"></div></div></div></td>
+      <td><span class="sp ${sc}">${st}</span></td>
+    </tr>`;
+      }).join('');
+    }
+    function togW(id, cb) { cb.checked ? sel.add(id) : sel.delete(id); updatePanel(); }
+    function selAll(cb) {
+      const data = curFilter === 'all' ? workers : workers.filter(w => w.status === curFilter);
+      data.forEach(w => cb.checked ? sel.add(w.id) : sel.delete(w.id));
+      renderTable(curFilter); updatePanel();
+    }
+    function updatePanel() {
+      const p = document.getElementById('assign-panel');
+      const lbl = document.getElementById('sel-lbl');
+      if (sel.size === 0) { p.classList.remove('show'); lbl.style.display = 'none'; return; }
+      p.classList.add('show');
+      lbl.style.display = 'inline-flex'; lbl.textContent = sel.size + ' Selected';
+      document.getElementById('ap-chips').innerHTML = [...sel].map(id => {
+        const w = workers.find(x => x.id === id);
+        return `<div class="sel-chip"><div class="eav" style="background:${w.col};width:22px;height:22px;font-size:0.6rem">${w.ini}</div>${w.name}<button onclick="desel('${id}')">✕</button></div>`;
+      }).join('');
+    }
+    function desel(id) { sel.delete(id); renderTable(curFilter); updatePanel(); }
+    function clearSel() { sel.clear(); renderTable(curFilter); updatePanel(); }
+    function confirmAssign() {
+      const t = document.getElementById('task-sel').value;
+      showToast(`✅ ${sel.size} worker(s) assigned to "${t}"`); clearSel();
+    }
+    function filterW(f, el) { document.querySelectorAll('.fc').forEach(c => c.classList.remove('active')); el.classList.add('active'); renderTable(f); }
+    function showToast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2800); }
+    function setActive(el) { document.querySelectorAll('.s-item').forEach(i => i.classList.remove('active')); el.classList.add('active'); }
+    function init() {
+      const n = sessionStorage.getItem('shiftai_name') || 'Admin';
+      document.getElementById('uname').textContent = n;
+      document.getElementById('dash-date').textContent = new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      renderTable('all');
+    }
+    init();
+
+    // ============================================================
+    // AI PREDICTION PANEL
+    // ============================================================
+    async function runAIPrediction() {
+      const desc = document.getElementById('aip-desc').value.trim();
+      if (!desc) { showAipError('Please enter a task description before running prediction.'); return; }
+
+      const payload = {
+        task_type: document.getElementById('aip-type').value,
+        task_description: desc,
+        task_priority: document.getElementById('aip-priority').value,
+        task_complexity_score: parseInt(document.getElementById('aip-complexity').value)
+      };
+
+      // UI: loading state
+      const btn = document.getElementById('aip-run-btn');
+      const spinner = document.getElementById('aip-spinner');
+      const btnTxt = document.getElementById('aip-btn-txt');
+      const errDiv = document.getElementById('aip-error');
+      const results = document.getElementById('aip-results');
+
+      btn.disabled = true;
+      spinner.style.display = 'block';
+      btnTxt.textContent = 'Running AI Models...';
+      errDiv.classList.remove('show');
+      results.classList.remove('show');
+
+      try {
+        const resp = await fetch('http://localhost:8080/predict_task', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!resp.ok) {
+          const err = await resp.json().catch(() => ({}));
+          throw new Error(err.error || `Server error ${resp.status}`);
+        }
+
+        const data = await resp.json();
+        renderAIPResults(data);
+        showToast('✅ AI Prediction complete!');
+
+      } catch (e) {
+        const msg = e.message.includes('Failed to fetch')
+          ? 'Cannot connect to backend. Make sure the Flask server is running on port 5000.'
+          : e.message;
+        showAipError(msg);
+      } finally {
+        btn.disabled = false;
+        spinner.style.display = 'none';
+        btnTxt.textContent = '🚀 Run AI Prediction';
+      }
+    }
+
+    function renderAIPResults(data) {
+      document.getElementById('res-team').textContent = data.team_size;
+      document.getElementById('res-dur').textContent = data.task_duration_days;
+
+      const empList = document.getElementById('res-emp-list');
+      empList.innerHTML = (data.recommended_employees || []).map((e, i) => {
+        const initials = e.name.split(' ').map(w => w[0]).join('').substring(0, 2);
+        const colors = ['#7C3AED', '#3A7FBF', '#22C55E', '#F97316', '#E87AA8', '#B87AE8', '#5CBF7A'];
+        const col = colors[i % colors.length];
+        return `<div class="aip-emp-card">
+      <div class="aip-emp-av" style="background:${col}">${initials}</div>
+      <div>
+        <div class="aip-emp-name">${e.name} <span style="font-size:0.7rem;color:var(--muted);font-weight:400">${e.id}</span></div>
+        <div class="aip-emp-skill">${e.primary_skill} · ${e.experience_years} yrs exp · Perf ${e.performance_score}</div>
+      </div>
+      <div class="aip-emp-right">
+        <div class="aip-match-pct">${e.match_probability}%</div>
+        <div style="font-size:0.68rem;color:var(--muted);margin-bottom:2px">match score</div>
+        <div class="aip-match-bar"><div class="aip-match-fill" style="width:${e.match_probability}%"></div></div>
+      </div>
+    </div>`;
+      }).join('');
+
+      document.getElementById('aip-results').classList.add('show');
+    }
+
+    function showAipError(msg) {
+      const el = document.getElementById('aip-error');
+      el.textContent = '⚠️ ' + msg;
+      el.classList.add('show');
+    }
+  </script>
+</body>
+
+</html>
